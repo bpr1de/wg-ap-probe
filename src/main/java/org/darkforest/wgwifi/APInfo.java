@@ -40,9 +40,6 @@ public class APInfo {
   // How long the access point has been powered on.
   private String uptime;
 
-  // The model variant of the access point.
-  private String revision;
-
   public APInfo(int address, short port, String sysInfo) {
     byte[] bytes = BigInteger.valueOf(address).toByteArray();
     try {
@@ -58,26 +55,32 @@ public class APInfo {
       break;
 
     default:
-      revision = lines[8];
+      if (!lines[10].trim().isEmpty()) {
+        model = lines[10];
+      }
 
-    case 8: // Unused
-    case 7: // Unused
-    case 6:
+    case 10: // Unused - local controller IP address
+    case 9:  // Unused - configuration revision
+    case 8:  // Unused - cloud vs. local operating mode
+    case 7:  // Unused
+    case 6:  // AP operating system runtime (uptime)
       uptime = lines[5];
 
-    case 5:
+    case 5:  // AP firmware version
       version = lines[4];
 
-    case 4:
+    case 4:  // AP serial number
       serial = lines[3];
 
-    case 3:
+    case 3:  // AP primary MAC address
       mac = lines[2];
 
-    case 2:
-      model = lines[1];
+    case 2:  // AP base model (could be extended later)
+      if (model == null) {
+        model = lines[1];
+      }
 
-    case 1:
+    case 1:  // AP Name
       name = lines[0];
     }
   }
@@ -126,10 +129,6 @@ public class APInfo {
     long seconds = TimeUnit.SECONDS.toSeconds(remainder);
 
     return days + "d, " + hours + ":" + minutes + "+" + seconds + "s";
-  }
-
-  public String getRevision() {
-    return revision;
   }
 
   @Override
