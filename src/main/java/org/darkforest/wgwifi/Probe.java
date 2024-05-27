@@ -154,7 +154,7 @@ public class Probe {
     Probe probe = new Probe();
 
     List<InetAddress> broadcastList = probe.getBroadcastAddressesFor(name);
-    if (broadcastList.size() == 0) {
+    if (broadcastList.isEmpty()) {
       System.out.println("No broadcast addresses for interface '" + name + "'");
       System.exit(-1);
     }
